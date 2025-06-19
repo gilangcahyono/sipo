@@ -7,8 +7,7 @@ class Admin extends CI_Controller
   public function __construct()
   {
     parent::__construct();
-
-    $this->load->model('apotek_models');
+    $this->load->model('sipa_models');
     $this->clear_cache();
     $this->cek_login();
   }
@@ -20,6 +19,7 @@ class Admin extends CI_Controller
       redirect("auth");
     }
   }
+
   function clear_cache()
   {
     $this->output->set_header("Cache-Control: no-store, no-cache, must-revalidate, no-transform, max-age=0, post-check=0, pre-check=0");
@@ -28,7 +28,7 @@ class Admin extends CI_Controller
 
   public function index()
   {
-    $data['title'] = 'Admin | Dashboard';
+    $data['title'] = 'SIPA | Dashboard';
     $data['bc'] = 'Dashboard';
     $this->load->view('module/header', $data);
     $this->load->view('admin/dashboard', $data);
@@ -38,8 +38,8 @@ class Admin extends CI_Controller
   // READ DATA
   public function drugs()
   {
-    $data['title'] = 'Admin | Obat';
-    $data['drugs'] = $this->apotek_models->get_data_query('select drugs.*, drugs.name as dname, drugs.id as did, units.name as uname, units.id as uid, units.* from drugs inner join units on drugs.id_unit = units.id')->result();
+    $data['title'] = 'SIPA | Obat';
+    $data['drugs'] = $this->sipa_models->get_data_query('select drugs.*, drugs.name as dname, drugs.id as did, units.name as uname, units.id as uid, units.* from drugs inner join units on drugs.id_unit = units.id')->result();
     $data['bc'] = 'Data Master / Obat';
     $this->load->view('module/header', $data);
     $this->load->view('admin/drugs', $data);
@@ -48,8 +48,8 @@ class Admin extends CI_Controller
 
   public function purchases()
   {
-    $data['title'] = 'Admin | Pembelian';
-    $data['purchases'] = $this->apotek_models->get_data_query('select purchase.*, purchase.id as idp, drugs.name as dname, suppliers.name as sname from purchase, drugs, suppliers where purchase. id_supplier = suppliers.id and purchase.id_drug = drugs.id')->result();
+    $data['title'] = 'SIPA | Pembelian';
+    $data['purchases'] = $this->sipa_models->get_data_query('select purchase.*, purchase.id as idp, drugs.name as dname, suppliers.name as sname from purchase, drugs, suppliers where purchase. id_supplier = suppliers.id and purchase.id_drug = drugs.id')->result();
     $data['bc'] = 'Data Master / Pembelian';
     $this->load->view('module/header', $data);
     $this->load->view('admin/purchases', $data);
@@ -58,7 +58,7 @@ class Admin extends CI_Controller
 
   public function sales()
   {
-    $data['title'] = 'Admin | Penjualan';
+    $data['title'] = 'SIPA | Penjualan';
     $data['bc'] = 'Data Master / Penjualan';
     $data['sales'] = $this->db->query("select sales.*, sales.id as ids, drugs.name as dname from sales inner join drugs on sales.id_drug = drugs.id")->result();
 
@@ -69,9 +69,9 @@ class Admin extends CI_Controller
 
   public function units()
   {
-    $data['title'] = 'Admin | Satuan';
+    $data['title'] = 'SIPA | Satuan';
     $data['bc'] = 'Data Ekstra / Satuan';
-    $data['units'] = $this->apotek_models->get_data('units');
+    $data['units'] = $this->sipa_models->get_data('units');
     $this->load->view('module/header', $data);
     $this->load->view('admin/units', $data);
     $this->load->view('module/footer');
@@ -79,9 +79,9 @@ class Admin extends CI_Controller
 
   public function suppliers()
   {
-    $data['title'] = 'Admin | Pemasok';
+    $data['title'] = 'SIPA | Pemasok';
     $data['bc'] = 'Data Ekstra / Pemasok';
-    $data['suppliers'] = $this->apotek_models->get_data('suppliers');
+    $data['suppliers'] = $this->sipa_models->get_data('suppliers');
     $this->load->view('module/header', $data);
     $this->load->view('admin/suppliers', $data);
     $this->load->view('module/footer');
@@ -89,9 +89,9 @@ class Admin extends CI_Controller
 
   public function drug_report()
   {
-    $data['title'] = 'Admin | Laporan Obat';
+    $data['title'] = 'SIPA | Laporan Obat';
     $data['bc'] = 'Laporan / Obat';
-    $data['obat'] = $this->apotek_models->get_data_query('select drugs.*, units.name as unit_name from drugs, units where drugs.id_unit = units.id')->result();
+    $data['obat'] = $this->sipa_models->get_data_query('select drugs.*, units.name as unit_name from drugs, units where drugs.id_unit = units.id')->result();
     $this->load->view('module/header', $data);
     $this->load->view('admin/drug_report', $data);
     $this->load->view('module/footer');
@@ -99,7 +99,7 @@ class Admin extends CI_Controller
 
   public function purchase_report()
   {
-    $data['title'] = 'Admin | Laporan Pembelian';
+    $data['title'] = 'SIPA | Laporan Pembelian';
     $data['bc'] = 'Laporan / Pembelian';
     $this->load->view('module/header', $data);
     $this->load->view('admin/purchase_report', $data);
@@ -108,9 +108,9 @@ class Admin extends CI_Controller
 
   public function sale_report()
   {
-    $data['title'] = 'Admin | Laporan Penjualan';
+    $data['title'] = 'SIPA | Laporan Penjualan';
     $data['bc'] = 'Laporan / Penjualan';
-    $data['sales'] = $this->apotek_models->get_data_query('select sales_detail.*, drugs.name as drug_name from sales_detail, drugs where sales_detail.id_drug = drugs.id')->result();
+    $data['sales'] = $this->sipa_models->get_data_query('select sales_detail.*, drugs.name as drug_name from sales_detail, drugs where sales_detail.id_drug = drugs.id')->result();
     $this->load->view('module/header', $data);
     $this->load->view('admin/sale_report', $data);
     $this->load->view('module/footer');
@@ -141,6 +141,7 @@ class Admin extends CI_Controller
     $this->session->set_flashdata("msg", "<div class='alert alert-success'>Obat baru dengan nama " . $nama_obat . " dan kode " . $kode_obat . " ditambahkan</div>");
     redirect("admin/drugs");
   }
+
   public function add_purchase()
   {
     $invoice_num = $this->input->post("invoice_num");
@@ -173,6 +174,7 @@ class Admin extends CI_Controller
       redirect("admin/purchases");
     }
   }
+
   public function add_sale()
   {
     $nota_num = $this->input->post("nota_num");
@@ -208,6 +210,7 @@ class Admin extends CI_Controller
       }
     }
   }
+
   public function addunit()
   {
     $unitname = $this->input->post("unitname");
@@ -224,6 +227,7 @@ class Admin extends CI_Controller
       redirect("admin/units");
     }
   }
+
   public function addsupplier()
   {
     $name = $this->input->post("name");
@@ -285,6 +289,7 @@ class Admin extends CI_Controller
       }
     }
   }
+
   public function editsupplier()
   {
     $id = $this->input->post("id_supplier");
@@ -339,6 +344,7 @@ class Admin extends CI_Controller
     $this->session->set_flashdata("msg", "<div class='alert alert-success'>Data berhasil dihapus!</div>");
     redirect("admin/sales");
   }
+
   public function deleteunit($id)
   {
     $query = $this->db->delete("units", ["id" => $id]);
@@ -351,6 +357,7 @@ class Admin extends CI_Controller
       redirect("admin/units");
     }
   }
+
   public function deletesupplier($id)
   {
     $query = $this->db->delete("suppliers", ["id" => $id]);
